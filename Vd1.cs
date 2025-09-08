@@ -4,7 +4,7 @@
 
 import java.util.*;
 
-// Sửa code lần 1: Tạo class Student, Teacher, Course, Enrollment, Grade 
+// Sửa code lần 2: Tạo class Student, Teacher, Course, Enrollment, Grade 
 
 // ========================== ENTITIES ==========================
 
