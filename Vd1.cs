@@ -216,7 +216,7 @@ public class CleanSchoolProgram {
                     System.out.print("Nhap id can xoa: ");
                     String delId = sc.nextLine();
                     // Lỗi có thể: không kiểm tra tồn tại -> ở đây removeIf handle luôn
-                    students.removeIf(s -> s.getId().equals(delId));
+                    students.removeIf(s->s.getId().equals(delId));
                     break;
 
                 case 3: // Cập nhật SV
@@ -245,7 +245,7 @@ public class CleanSchoolProgram {
                 case 5: // Tìm SV GPA > 8
                     // ❌ LỖI cũ: parse string -> dùng Double.parseDouble(...) nhiều chỗ
                     // ✅ SỬA: dùng object property, stream filter
-                    students.stream().filter(s -> s.getGpa() > 8.0).forEach(System.out::println);
+                    students.stream().filter(s->s.getGpa() > 8.0).forEach(System.out::println);
                     break;
 
                 case 9:
@@ -279,7 +279,7 @@ public class CleanSchoolProgram {
                     break;
                 case 2:
                     System.out.print("Nhap id GV can xoa: "); String delId = sc.nextLine();
-                    teachers.removeIf(t -> t.getId().equals(delId));
+                    teachers.removeIf(t->t.getId().equals(delId));
                     break;
                 case 3:
                     System.out.print("Nhap id GV cap nhat: "); String upId = sc.nextLine();
@@ -327,7 +327,7 @@ public class CleanSchoolProgram {
                     break;
                 case 2:
                     System.out.print("Nhap id MH can xoa: "); String delId = sc.nextLine();
-                    courses.removeIf(c -> c.getId().equals(delId));
+                    courses.removeIf(c->c.getId().equals(delId));
                     break;
                 case 3:
                     System.out.print("Nhap id MH cap nhat: "); String upId = sc.nextLine();
@@ -376,7 +376,7 @@ public class CleanSchoolProgram {
                 case 2:
                     System.out.print("Nhap id SV: "); String rsid = sc.nextLine();
                     System.out.print("Nhap id MH: "); String rcid = sc.nextLine();
-                    enrollments.removeIf(e -> e.getStudentId().equals(rsid) && e.getCourseId().equals(rcid));
+                    enrollments.removeIf(e->e.getStudentId().equals(rsid) && e.getCourseId().equals(rcid));
                     break;
                 case 3:
                     enrollments.forEach(System.out::println);
@@ -436,6 +436,31 @@ public class CleanSchoolProgram {
     private static void report() {
         // ❌ LỖI cũ: nested loops + parsings -> messy, unreadable
         // ✅ SỬA: Duyệt object trực tiếp, logic rõ ràng (tuy vẫn nested, có thể tối ưu)
+        System.out.println("=== BAO CAO ===");
+        for (Student s : students) {
+            System.out.println("Sinh vien: " + s.getName());
+            for (Enrollment e : enrollments) {
+                if (e.getStudentId().equals(s.getId())) {
+                    for (Course c : courses) {
+                        if (c.getId().equals(e.getCourseId())) {
+                            System.out.print(" - Mon hoc: " + c.getName());
+                            // Tìm điểm tương ứng
+                            for (Grade g : grades) {
+                                if (g.getStudentId().equals(s.getId()) && g.getCourseId().equals(c.getId())) {
+                                    System.out.print(" | Diem: " + g.getScore());
+                                }
+                            }
+                            System.out.println();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void report() {
+    // ❌ LỖI cũ: nested loops + parsings -> messy, unreadable
+    // ✅ SỬA: Duyệt object trực tiếp, logic rõ ràng (tuy vẫn nested, có thể tối ưu)
         System.out.println("=== BAO CAO ===");
         for (Student s : students) {
             System.out.println("Sinh vien: " + s.getName());
