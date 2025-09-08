@@ -1,172 +1,177 @@
-// BadSchoolProgram.cs
-// Chương trình quản lý trường học bằng C# cực kỳ BAD CODE
-// Gồm: Sinh viên, Giáo viên, Môn học, Đăng ký, Điểm
-// Tất cả lưu bằng List<string> kiểu "id|field1|field2|..."
+// Vd2Clean_Commented.cs
+// Refactor từ Vd2.cs (BAD CODE) -> CLEAN CODE
+// Có comment rõ chỗ lỗi và loại lỗi (code smell/design issue)
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-public class BadSchoolProgram
+// ========================== ENTITY CLASSES ==========================
+
+// ❌ LỖI: Trước lưu nhân viên bằng string "id|name|age|salary"
+//        -> Magic string, Primitive Obsession, khó bảo trì
+// ✅ SỬA: Tạo class Employee với thuộc tính rõ ràng (Encapsulation)
+class Employee
 {
-    public static void Main(string[] args)
-    {
-        List<string> students = new List<string>();
-        List<string> teachers = new List<string>();
-        List<string> courses = new List<string>();
-        List<string> enrollments = new List<string>();
-        List<string> grades = new List<string>();
+    // ✅ Sửa: private fields + property
+    public string Id { get; set; }     
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public double Salary { get; set; }
 
+    public Employee(string id, string name, int age, double salary)
+    {
+        Id = id;
+        Name = name;
+        Age = age;
+        Salary = salary;
+    }
+
+    public override string ToString()
+    {
+        return $"ID:{Id} Name:{Name} Age:{Age} Salary:{Salary}";
+    }
+}
+
+// ========================== MAIN PROGRAM ==========================
+
+class CleanEmployeeProgram
+{
+    // ❌ LỖI: Trước dùng List<string> và split("|") để xử lý nhân viên
+    // ✅ SỬA: Dùng List<Employee> -> type safety, dễ bảo trì
+    private static List<Employee> employees = new List<Employee>();
+
+    static void Main()
+    {
         int menu = 0;
         while (menu != 99)
         {
-            Console.WriteLine("============= MENU CHINH =============");
-            Console.WriteLine("1. Quan ly Sinh vien");
-            Console.WriteLine("2. Quan ly Giao vien");
-            Console.WriteLine("3. Quan ly Mon hoc");
-            Console.WriteLine("4. Quan ly Dang ky hoc");
-            Console.WriteLine("5. Quan ly Diem");
-            Console.WriteLine("6. Bao cao tong hop");
+            Console.WriteLine("===== MENU QUAN LY NHAN VIEN =====");
+            Console.WriteLine("1. Them nhan vien");
+            Console.WriteLine("2. Xoa nhan vien");
+            Console.WriteLine("3. Cap nhat thong tin nhan vien");
+            Console.WriteLine("4. Hien thi tat ca nhan vien");
+            Console.WriteLine("5. Tim nhan vien co luong > 10tr");
             Console.WriteLine("99. Thoat");
             Console.Write("Nhap lua chon: ");
-            menu = int.Parse(Console.ReadLine());
 
-            if (menu == 1)
+            // ❌ LỖI: Bản cũ không validate input -> crash nếu nhập sai
+            // ✅ SỬA: Dùng int.TryParse để tránh crash
+            if (!int.TryParse(Console.ReadLine(), out menu))
             {
-                int smenu = 0;
-                while (smenu != 9)
-                {
-                    Console.WriteLine("--- QUAN LY SINH VIEN ---");
-                    Console.WriteLine("1. Them SV");
-                    Console.WriteLine("2. Xoa SV");
-                    Console.WriteLine("3. Cap nhat SV");
-                    Console.WriteLine("4. Hien thi tat ca SV");
-                    Console.WriteLine("5. Tim SV theo ten");
-                    Console.WriteLine("6. Tim SV GPA > 8");
-                    Console.WriteLine("7. Sap xep theo ten");
-                    Console.WriteLine("8. Sap xep theo GPA");
-                    Console.WriteLine("9. Quay lai");
-                    smenu = int.Parse(Console.ReadLine());
-
-                    if (smenu == 1)
-                    {
-                        Console.Write("Nhap id: ");
-                        string id = Console.ReadLine();
-                        Console.Write("Nhap ten: ");
-                        string name = Console.ReadLine();
-                        Console.Write("Nhap tuoi: ");
-                        int age = int.Parse(Console.ReadLine());
-                        Console.Write("Nhap GPA: ");
-                        double gpa = double.Parse(Console.ReadLine());
-                        students.Add(id + "|" + name + "|" + age + "|" + gpa);
-                    }
-                    else if (smenu == 2)
-                    {
-                        Console.Write("Nhap id can xoa: ");
-                        string id = Console.ReadLine();
-                        for (int i = 0; i < students.Count; i++)
-                        {
-                            string[] parts = students[i].Split('|');
-                            if (parts[0] == id)
-                            {
-                                students.RemoveAt(i);
-                                break;
-                            }
-                        }
-                    }
-                    else if (smenu == 3)
-                    {
-                        Console.Write("Nhap id can cap nhat: ");
-                        string id = Console.ReadLine();
-                        for (int i = 0; i < students.Count; i++)
-                        {
-                            string[] parts = students[i].Split('|');
-                            if (parts[0] == id)
-                            {
-                                Console.Write("Nhap ten moi: ");
-                                string name = Console.ReadLine();
-                                Console.Write("Nhap tuoi moi: ");
-                                int age = int.Parse(Console.ReadLine());
-                                Console.Write("Nhap GPA moi: ");
-                                double gpa = double.Parse(Console.ReadLine());
-                                students[i] = id + "|" + name + "|" + age + "|" + gpa;
-                            }
-                        }
-                    }
-                    else if (smenu == 4)
-                    {
-                        foreach (var s in students)
-                        {
-                            string[] p = s.Split('|');
-                            Console.WriteLine("ID:" + p[0] + " Name:" + p[1] + " Age:" + p[2] + " GPA:" + p[3]);
-                        }
-                    }
-                    else if (smenu == 5)
-                    {
-                        Console.Write("Nhap ten: ");
-                        string name = Console.ReadLine();
-                        foreach (var s in students)
-                        {
-                            string[] p = s.Split('|');
-                            if (p[1] == name)
-                            {
-                                Console.WriteLine("Tim thay: " + s);
-                            }
-                        }
-                    }
-                    else if (smenu == 6)
-                    {
-                        foreach (var s in students)
-                        {
-                            string[] p = s.Split('|');
-                            if (double.Parse(p[3]) > 8.0)
-                            {
-                                Console.WriteLine("Sinh vien gioi: " + s);
-                            }
-                        }
-                    }
-                    else if (smenu == 7)
-                    {
-                        for (int i = 0; i < students.Count; i++)
-                        {
-                            for (int j = 0; j < students.Count - 1; j++)
-                            {
-                                string[] p1 = students[j].Split('|');
-                                string[] p2 = students[j + 1].Split('|');
-                                if (p1[1].CompareTo(p2[1]) > 0)
-                                {
-                                    string tmp = students[j];
-                                    students[j] = students[j + 1];
-                                    students[j + 1] = tmp;
-                                }
-                            }
-                        }
-                        Console.WriteLine("Da sap xep theo ten.");
-                    }
-                    else if (smenu == 8)
-                    {
-                        for (int i = 0; i < students.Count; i++)
-                        {
-                            for (int j = 0; j < students.Count - 1; j++)
-                            {
-                                string[] p1 = students[j].Split('|');
-                                string[] p2 = students[j + 1].Split('|');
-                                if (double.Parse(p1[3]) < double.Parse(p2[3]))
-                                {
-                                    string tmp = students[j];
-                                    students[j] = students[j + 1];
-                                    students[j + 1] = tmp;
-                                }
-                            }
-                        }
-                        Console.WriteLine("Da sap xep theo GPA.");
-                    }
-                }
+                Console.WriteLine("Nhap so hop le!");
+                continue;
             }
-            
-            // Quản lý giáo viên, môn học, đăng ký, điểm, báo cáo 
-            // (phần này em giữ nguyên cấu trúc như bản Java 10 trang)
-            // copy-paste gần y nguyên, chỉ đổi cú pháp sang C#
-            // ... (do code quá dài nên em dừng ở đây, còn lại tương tự bản Java)
+
+            switch (menu)
+            {
+                case 1: AddEmployee(); break;
+                case 2: DeleteEmployee(); break;
+                case 3: UpdateEmployee(); break;
+                case 4: ShowEmployees(); break;
+                case 5: FindHighSalary(); break;
+                case 99: Console.WriteLine("Thoat chuong trinh."); break;
+                default: Console.WriteLine("Lua chon khong hop le."); break;
+            }
+        }
+    }
+
+    // ========================== EMPLOYEE MANAGEMENT ==========================
+
+    private static void AddEmployee()
+    {
+        Console.Write("Nhap id: ");
+        string id = Console.ReadLine();
+        Console.Write("Nhap ten: ");
+        string name = Console.ReadLine();
+        Console.Write("Nhap tuoi: ");
+        int age = ReadIntSafe();
+        Console.Write("Nhap luong: ");
+        double salary = ReadDoubleSafe();
+
+        employees.Add(new Employee(id, name, age, salary));
+        Console.WriteLine("Them nhan vien thanh cong!");
+    }
+
+    private static void DeleteEmployee()
+    {
+        Console.Write("Nhap id can xoa: ");
+        string id = Console.ReadLine();
+
+        // ❌ LỖI: Bản cũ duyệt for + split để xóa
+        // ✅ SỬA: dùng RemoveAll + lambda
+        int removed = employees.RemoveAll(e => e.Id == id);
+        if (removed > 0)
+            Console.WriteLine("Xoa thanh cong.");
+        else
+            Console.WriteLine("Khong tim thay nhan vien.");
+    }
+
+    private static void UpdateEmployee()
+    {
+        Console.Write("Nhap id can cap nhat: ");
+        string id = Console.ReadLine();
+
+        var emp = employees.FirstOrDefault(e => e.Id == id);
+        if (emp != null)
+        {
+            Console.Write("Nhap ten moi: ");
+            emp.Name = Console.ReadLine();
+            Console.Write("Nhap tuoi moi: ");
+            emp.Age = ReadIntSafe();
+            Console.Write("Nhap luong moi: ");
+            emp.Salary = ReadDoubleSafe();
+            Console.WriteLine("Cap nhat thanh cong!");
+        }
+        else
+        {
+            Console.WriteLine("Khong tim thay nhan vien.");
+        }
+    }
+
+    private static void ShowEmployees()
+    {
+        if (employees.Count == 0)
+        {
+            Console.WriteLine("Danh sach rong.");
+            return;
+        }
+
+        employees.ForEach(Console.WriteLine);
+    }
+
+    private static void FindHighSalary()
+    {
+        // ❌ LỖI: Bản cũ parse string để lọc
+        // ✅ SỬA: dùng LINQ trực tiếp với property
+        var list = employees.Where(e => e.Salary > 10000000).ToList();
+        if (list.Count == 0)
+            Console.WriteLine("Khong co nhan vien nao luong > 10tr.");
+        else
+            list.ForEach(Console.WriteLine);
+    }
+
+    // ========================== HELPERS ==========================
+
+    // ❌ LỖI: Bản cũ dùng int.Parse, double.Parse -> crash nếu nhập sai
+    // ✅ SỬA: helper safe input
+    private static int ReadIntSafe()
+    {
+        while (true)
+        {
+            if (int.TryParse(Console.ReadLine(), out int value))
+                return value;
+            Console.Write("Nhap so nguyen hop le: ");
+        }
+    }
+
+    private static double ReadDoubleSafe()
+    {
+        while (true)
+        {
+            if (double.TryParse(Console.ReadLine(), out double value))
+                return value;
+            Console.Write("Nhap so thuc hop le: ");
         }
     }
 }

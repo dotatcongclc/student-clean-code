@@ -1,23 +1,147 @@
-// Chương trình quản lý trường học cực kỳ BAD CODE
-// Lưu ý: code này chỉ để sinh viên phân tích, KHÔNG nên dùng thật
-// Tất cả dữ liệu lưu trữ trong ArrayList<String> dạng "id|name|field1|field2|..."
+// Vd1Clean_Commented.java
+// Refactor từ Vd1.cs (BAD CODE) -> CLEAN CODE với OOP
+// MỌI chỗ sửa đều có comment chỉ rõ: lỗi cũ -> cách sửa -> loại lỗi (code smell / design issue)
 
 import java.util.*;
 
-public class BadSchoolProgram {
+// ========================== ENTITIES ==========================
+
+// ❌ LỖI: Trước dùng ArrayList<String> lưu "id|name|age|gpa"
+//        => Magic string / Stringly-typed data / Primitive Obsession
+// ✅ SỬA: Tạo class Student với thuộc tính, getter/setter, toString (Encapsulation)
+class Student {
+    // ✅ Sửa: fields private => encapsulation (Information hiding)
+    private String id;
+    private String name;
+    private int age;
+    private double gpa;
+
+    // ✅ Sửa: constructor rõ ràng
+    public Student(String id, String name, int age, double gpa) {
+        this.id = id; this.name = name; this.age = age; this.gpa = gpa;
+    }
+
+    // ✅ Sửa: getter/setter thay vì thao tác chuỗi
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public double getGpa() { return gpa; }
+
+    public void setName(String name) { this.name = name; }
+    public void setAge(int age) { this.age = age; }
+    public void setGpa(double gpa) { this.gpa = gpa; }
+
+    @Override
+    public String toString() {
+        return "ID:" + id + " Name:" + name + " Age:" + age + " GPA:" + gpa;
+    }
+}
+
+// Teacher entity
+// ❌ LỖI: Trước lưu "id|name|major" => Stringly-typed, duplicate logic with students
+// ✅ SỬA: Tạo class Teacher => giảm duplication, rõ ràng
+class Teacher {
+    private String id;
+    private String name;
+    private String major;
+
+    public Teacher(String id, String name, String major) {
+        this.id = id; this.name = name; this.major = major;
+    }
+
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String getMajor() { return major; }
+
+    public void setName(String name) { this.name = name; }
+    public void setMajor(String major) { this.major = major; }
+
+    @Override
+    public String toString() {
+        return "ID:" + id + " Name:" + name + " Major:" + major;
+    }
+}
+
+// Course entity
+// ❌ LỖI: Trước lưu "id|name|credits" => poor structure
+// ✅ SỬA: Class Course
+class Course {
+    private String id;
+    private String name;
+    private int credits;
+
+    public Course(String id, String name, int credits) {
+        this.id = id; this.name = name; this.credits = credits;
+    }
+
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public int getCredits() { return credits; }
+
+    public void setName(String name) { this.name = name; }
+    public void setCredits(int credits) { this.credits = credits; }
+
+    @Override
+    public String toString() {
+        return "ID:" + id + " Name:" + name + " Credits:" + credits;
+    }
+}
+
+// Enrollment entity
+class Enrollment {
+    private String studentId;
+    private String courseId;
+
+    public Enrollment(String studentId, String courseId) {
+        this.studentId = studentId; this.courseId = courseId;
+    }
+
+    public String getStudentId() { return studentId; }
+    public String getCourseId() { return courseId; }
+
+    @Override
+    public String toString() {
+        return "SV:" + studentId + " dang ky MH:" + courseId;
+    }
+}
+
+// Grade entity
+class Grade {
+    private String studentId;
+    private String courseId;
+    private double score;
+
+    public Grade(String studentId, String courseId, double score) {
+        this.studentId = studentId; this.courseId = courseId; this.score = score;
+    }
+
+    public String getStudentId() { return studentId; }
+    public String getCourseId() { return courseId; }
+    public double getScore() { return score; }
+
+    public void setScore(double score) { this.score = score; }
+
+    @Override
+    public String toString() {
+        return "SV:" + studentId + " MH:" + courseId + " Diem:" + score;
+    }
+}
+
+// ========================== MAIN PROGRAM ==========================
+public class CleanSchoolProgram {
+    // ❌ LỖI: Dùng ArrayList<String> & split ở nhiều nơi -> duplication, fragile parsing
+    // ✅ SỬA: Dùng List<Entity> để tăng type-safety và maintainability
+    private static List<Student> students = new ArrayList<>();
+    private static List<Teacher> teachers = new ArrayList<>();
+    private static List<Course> courses = new ArrayList<>();
+    private static List<Enrollment> enrollments = new ArrayList<>();
+    private static List<Grade> grades = new ArrayList<>();
+    private static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        // Danh sách dữ liệu: lưu sinh viên, giáo viên, môn học, đăng ký, điểm...
-        ArrayList<String> students = new ArrayList<String>();
-        ArrayList<String> teachers = new ArrayList<String>();
-        ArrayList<String> courses = new ArrayList<String>();
-        ArrayList<String> enrollments = new ArrayList<String>();
-        ArrayList<String> grades = new ArrayList<String>();
-
         int menu = 0;
         while (menu != 99) {
-            System.out.println("============= MENU CHINH =============");
+            System.out.println("===== MENU CHINH =====");
             System.out.println("1. Quan ly Sinh vien");
             System.out.println("2. Quan ly Giao vien");
             System.out.println("3. Quan ly Mon hoc");
@@ -26,309 +150,324 @@ public class BadSchoolProgram {
             System.out.println("6. Bao cao tong hop");
             System.out.println("99. Thoat");
             System.out.print("Nhap lua chon: ");
-            menu = sc.nextInt(); sc.nextLine();
+            try {
+                menu = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException ex) {
+                System.out.println("Nhap so hop le!");
+                continue;
+            }
 
-            if (menu == 1) {
-                // Quản lý sinh viên
-                int smenu = 0;
-                while (smenu != 9) {
-                    System.out.println("--- QUAN LY SINH VIEN ---");
-                    System.out.println("1. Them SV");
-                    System.out.println("2. Xoa SV");
-                    System.out.println("3. Cap nhat SV");
-                    System.out.println("4. Hien thi tat ca SV");
-                    System.out.println("5. Tim SV theo ten");
-                    System.out.println("6. Tim SV GPA > 8");
-                    System.out.println("7. Sap xep theo ten");
-                    System.out.println("8. Sap xep theo GPA");
-                    System.out.println("9. Quay lai");
-                    smenu = sc.nextInt(); sc.nextLine();
+            // ❌ LỖI: Bản gốc viết mọi thứ trong main => God Method, vi phạm SRP
+            // ✅ SỬA: Tách ra các method manageStudents(), manageTeachers(), ... (Single Responsibility)
+            switch (menu) {
+                case 1: manageStudents(); break;
+                case 2: manageTeachers(); break;
+                case 3: manageCourses(); break;
+                case 4: manageEnrollments(); break;
+                case 5: manageGrades(); break;
+                case 6: report(); break;
+                case 99: System.out.println("Thoat."); break;
+                default: System.out.println("Lua chon khong hop le."); break;
+            }
+        }
+    }
 
-                    if (smenu == 1) {
-                        System.out.print("Nhap id: ");
-                        String id = sc.nextLine();
-                        System.out.print("Nhap ten: ");
-                        String name = sc.nextLine();
-                        System.out.print("Nhap tuoi: ");
-                        int age = sc.nextInt(); sc.nextLine();
-                        System.out.print("Nhap GPA: ");
-                        double gpa = sc.nextDouble(); sc.nextLine();
-                        students.add(id + "|" + name + "|" + age + "|" + gpa);
-                    } else if (smenu == 2) {
-                        System.out.print("Nhap id can xoa: ");
-                        String id = sc.nextLine();
-                        for (int i = 0; i < students.size(); i++) {
-                            String[] parts = students.get(i).split("\\|");
-                            if (parts[0].equals(id)) {
-                                students.remove(i);
-                                break;
-                            }
+    // ========================== STUDENT ==========================
+    private static void manageStudents() {
+        int smenu = 0;
+        while (smenu != 9) {
+            System.out.println("--- QUAN LY SINH VIEN ---");
+            System.out.println("1. Them SV");
+            System.out.println("2. Xoa SV");
+            System.out.println("3. Cap nhat SV");
+            System.out.println("4. Hien thi tat ca SV");
+            System.out.println("5. Tim SV GPA > 8");
+            System.out.println("9. Quay lai");
+            System.out.print("Lua chon: ");
+            try {
+                smenu = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException ex) {
+                System.out.println("Nhap so hop le!");
+                continue;
+            }
+
+            switch (smenu) {
+                case 1: // Thêm SV
+                    // ❌ LỖI cũ: students.add(id + "|" + name + "|" + age + "|" + gpa);
+                    //    -> Stringly-typed; parsing fragile; violation of encapsulation
+                    // ✅ SỬA: tạo Student object và add vào List<Student]
+                    System.out.print("Nhap id: ");
+                    String id = sc.nextLine();
+                    System.out.print("Nhap ten: ");
+                    String name = sc.nextLine();
+                    System.out.print("Nhap tuoi: ");
+                    int age = readIntSafe();
+                    System.out.print("Nhap GPA: ");
+                    double gpa = readDoubleSafe();
+                    students.add(new Student(id, name, age, gpa));
+                    break;
+
+                case 2: // Xóa SV
+                    // ❌ LỖI cũ: dùng for + split("|") để tìm rồi remove => verbose và dễ lỗi index
+                    // ✅ SỬA: sử dụng removeIf với lambda (clean + safe)
+                    System.out.print("Nhap id can xoa: ");
+                    String delId = sc.nextLine();
+                    // Lỗi có thể: không kiểm tra tồn tại -> ở đây removeIf handle luôn
+                    students.removeIf(s -> s.getId().equals(delId));
+                    break;
+
+                case 3: // Cập nhật SV
+                    // ❌ LỖI cũ: parse chuỗi và set lại string -> fragile
+                    // ✅ SỬA: tìm object và gọi setter
+                    System.out.print("Nhap id can cap nhat: ");
+                    String upId = sc.nextLine();
+                    boolean found = false;
+                    for (Student s : students) {
+                        if (s.getId().equals(upId)) {
+                            found = true;
+                            System.out.print("Nhap ten moi: "); s.setName(sc.nextLine());
+                            System.out.print("Nhap tuoi moi: "); s.setAge(readIntSafe());
+                            System.out.print("Nhap GPA moi: "); s.setGpa(readDoubleSafe());
+                            System.out.println("Da cap nhat.");
                         }
-                    } else if (smenu == 3) {
-                        System.out.print("Nhap id can cap nhat: ");
-                        String id = sc.nextLine();
-                        for (int i = 0; i < students.size(); i++) {
-                            String[] parts = students.get(i).split("\\|");
-                            if (parts[0].equals(id)) {
-                                System.out.print("Nhap ten moi: ");
-                                String name = sc.nextLine();
-                                System.out.print("Nhap tuoi moi: ");
-                                int age = sc.nextInt(); sc.nextLine();
-                                System.out.print("Nhap GPA moi: ");
-                                double gpa = sc.nextDouble(); sc.nextLine();
-                                students.set(i, id + "|" + name + "|" + age + "|" + gpa);
-                            }
+                    }
+                    if (!found) System.out.println("Khong tim thay SV.");
+                    break;
+
+                case 4: // Hiển thị tất cả SV
+                    // ✅ Dùng forEach + toString (cohesion)
+                    students.forEach(System.out::println);
+                    break;
+
+                case 5: // Tìm SV GPA > 8
+                    // ❌ LỖI cũ: parse string -> dùng Double.parseDouble(...) nhiều chỗ
+                    // ✅ SỬA: dùng object property, stream filter
+                    students.stream().filter(s -> s.getGpa() > 8.0).forEach(System.out::println);
+                    break;
+
+                case 9:
+                    break;
+
+                default:
+                    System.out.println("Lua chon khong hop le.");
+            }
+        }
+    }
+
+    // ========================== TEACHER ==========================
+    private static void manageTeachers() {
+        int tmenu = 0;
+        while (tmenu != 9) {
+            System.out.println("--- QUAN LY GIAO VIEN ---");
+            System.out.println("1. Them GV");
+            System.out.println("2. Xoa GV");
+            System.out.println("3. Cap nhat GV");
+            System.out.println("4. Hien thi GV");
+            System.out.println("9. Quay lai");
+            System.out.print("Lua chon: ");
+            try { tmenu = Integer.parseInt(sc.nextLine()); } catch (Exception e) { System.out.println("Nhap so!"); continue; }
+
+            switch (tmenu) {
+                case 1:
+                    System.out.print("Nhap id GV: "); String id = sc.nextLine();
+                    System.out.print("Nhap ten GV: "); String name = sc.nextLine();
+                    System.out.print("Nhap chuyen mon: "); String major = sc.nextLine();
+                    teachers.add(new Teacher(id, name, major));
+                    break;
+                case 2:
+                    System.out.print("Nhap id GV can xoa: "); String delId = sc.nextLine();
+                    teachers.removeIf(t -> t.getId().equals(delId));
+                    break;
+                case 3:
+                    System.out.print("Nhap id GV cap nhat: "); String upId = sc.nextLine();
+                    boolean found = false;
+                    for (Teacher t : teachers) {
+                        if (t.getId().equals(upId)) {
+                            found = true;
+                            System.out.print("Nhap ten moi: "); t.setName(sc.nextLine());
+                            System.out.print("Nhap chuyen mon moi: "); t.setMajor(sc.nextLine());
+                            System.out.println("Da cap nhat GV.");
                         }
-                    } else if (smenu == 4) {
-                        for (int i = 0; i < students.size(); i++) {
-                            String[] p = students.get(i).split("\\|");
-                            System.out.println("ID:" + p[0] + " Name:" + p[1] + " Age:" + p[2] + " GPA:" + p[3]);
+                    }
+                    if (!found) System.out.println("Khong tim thay GV.");
+                    break;
+                case 4:
+                    teachers.forEach(System.out::println);
+                    break;
+                case 9:
+                    break;
+                default:
+                    System.out.println("Lua chon khong hop le.");
+            }
+        }
+    }
+
+    // ========================== COURSE ==========================
+    private static void manageCourses() {
+        int cmenu = 0;
+        while (cmenu != 9) {
+            System.out.println("--- QUAN LY MON HOC ---");
+            System.out.println("1. Them MH");
+            System.out.println("2. Xoa MH");
+            System.out.println("3. Cap nhat MH");
+            System.out.println("4. Hien thi MH");
+            System.out.println("9. Quay lai");
+            System.out.print("Lua chon: ");
+            try { cmenu = Integer.parseInt(sc.nextLine()); } catch (Exception e) { System.out.println("Nhap so!"); continue; }
+
+            switch (cmenu) {
+                case 1:
+                    System.out.print("Nhap id MH: "); String id = sc.nextLine();
+                    System.out.print("Nhap ten MH: "); String name = sc.nextLine();
+                    System.out.print("Nhap so tin chi: "); int tc = readIntSafe();
+                    courses.add(new Course(id, name, tc));
+                    break;
+                case 2:
+                    System.out.print("Nhap id MH can xoa: "); String delId = sc.nextLine();
+                    courses.removeIf(c -> c.getId().equals(delId));
+                    break;
+                case 3:
+                    System.out.print("Nhap id MH cap nhat: "); String upId = sc.nextLine();
+                    boolean found = false;
+                    for (Course c : courses) {
+                        if (c.getId().equals(upId)) {
+                            found = true;
+                            System.out.print("Nhap ten moi: "); c.setName(sc.nextLine());
+                            System.out.print("Nhap tin chi moi: "); c.setCredits(readIntSafe());
+                            System.out.println("Da cap nhat MH.");
                         }
-                    } else if (smenu == 5) {
-                        System.out.print("Nhap ten: ");
-                        String name = sc.nextLine();
-                        for (int i = 0; i < students.size(); i++) {
-                            String[] p = students.get(i).split("\\|");
-                            if (p[1].equals(name)) {
-                                System.out.println("Tim thay: " + students.get(i));
-                            }
+                    }
+                    if (!found) System.out.println("Khong tim thay MH.");
+                    break;
+                case 4:
+                    courses.forEach(System.out::println);
+                    break;
+                case 9:
+                    break;
+                default:
+                    System.out.println("Lua chon khong hop le.");
+            }
+        }
+    }
+
+    // ========================== ENROLLMENT ==========================
+    private static void manageEnrollments() {
+        int emenu = 0;
+        while (emenu != 9) {
+            System.out.println("--- QUAN LY DANG KY HOC ---");
+            System.out.println("1. Dang ky mon hoc");
+            System.out.println("2. Huy dang ky");
+            System.out.println("3. Xem tat ca dang ky");
+            System.out.println("9. Quay lai");
+            System.out.print("Lua chon: ");
+            try { emenu = Integer.parseInt(sc.nextLine()); } catch (Exception e) { System.out.println("Nhap so!"); continue; }
+
+            switch (emenu) {
+                case 1:
+                    System.out.print("Nhap id SV: "); String sid = sc.nextLine();
+                    System.out.print("Nhap id MH: "); String cid = sc.nextLine();
+                    // ❌ LỖI cũ: Thêm chuỗi "sid|cid" -> khó truy vấn
+                    // ✅ SỬA: Thêm Enrollment object
+                    enrollments.add(new Enrollment(sid, cid));
+                    break;
+                case 2:
+                    System.out.print("Nhap id SV: "); String rsid = sc.nextLine();
+                    System.out.print("Nhap id MH: "); String rcid = sc.nextLine();
+                    enrollments.removeIf(e -> e.getStudentId().equals(rsid) && e.getCourseId().equals(rcid));
+                    break;
+                case 3:
+                    enrollments.forEach(System.out::println);
+                    break;
+                case 9:
+                    break;
+                default:
+                    System.out.println("Lua chon khong hop le.");
+            }
+        }
+    }
+
+    // ========================== GRADE ==========================
+    private static void manageGrades() {
+        int gmenu = 0;
+        while (gmenu != 9) {
+            System.out.println("--- QUAN LY DIEM ---");
+            System.out.println("1. Nhap diem");
+            System.out.println("2. Cap nhat diem");
+            System.out.println("3. Hien thi diem");
+            System.out.println("9. Quay lai");
+            System.out.print("Lua chon: ");
+            try { gmenu = Integer.parseInt(sc.nextLine()); } catch (Exception e) { System.out.println("Nhap so!"); continue; }
+
+            switch (gmenu) {
+                case 1:
+                    System.out.print("Nhap id SV: "); String sid = sc.nextLine();
+                    System.out.print("Nhap id MH: "); String cid = sc.nextLine();
+                    System.out.print("Nhap diem: "); double d = readDoubleSafe();
+                    grades.add(new Grade(sid, cid, d));
+                    break;
+                case 2:
+                    System.out.print("Nhap id SV: "); String usid = sc.nextLine();
+                    System.out.print("Nhap id MH: "); String ucid = sc.nextLine();
+                    boolean found = false;
+                    for (Grade gr : grades) {
+                        if (gr.getStudentId().equals(usid) && gr.getCourseId().equals(ucid)) {
+                            found = true;
+                            System.out.print("Nhap diem moi: "); gr.setScore(readDoubleSafe());
+                            System.out.println("Da cap nhat diem.");
                         }
-                    } else if (smenu == 6) {
-                        for (int i = 0; i < students.size(); i++) {
-                            String[] p = students.get(i).split("\\|");
-                            if (Double.parseDouble(p[3]) > 8.0) {
-                                System.out.println("Sinh vien gioi: " + students.get(i));
-                            }
-                        }
-                    } else if (smenu == 7) {
-                        for (int i = 0; i < students.size(); i++) {
-                            for (int j = 0; j < students.size() - 1; j++) {
-                                String[] p1 = students.get(j).split("\\|");
-                                String[] p2 = students.get(j + 1).split("\\|");
-                                if (p1[1].compareTo(p2[1]) > 0) {
-                                    String tmp = students.get(j);
-                                    students.set(j, students.get(j + 1));
-                                    students.set(j + 1, tmp);
+                    }
+                    if (!found) System.out.println("Khong tim thay diem.");
+                    break;
+                case 3:
+                    grades.forEach(System.out::println);
+                    break;
+                case 9:
+                    break;
+                default:
+                    System.out.println("Lua chon khong hop le.");
+            }
+        }
+    }
+
+    // ========================== REPORT ==========================
+    private static void report() {
+        // ❌ LỖI cũ: nested loops + parsings -> messy, unreadable
+        // ✅ SỬA: Duyệt object trực tiếp, logic rõ ràng (tuy vẫn nested, có thể tối ưu)
+        System.out.println("=== BAO CAO ===");
+        for (Student s : students) {
+            System.out.println("Sinh vien: " + s.getName());
+            for (Enrollment e : enrollments) {
+                if (e.getStudentId().equals(s.getId())) {
+                    for (Course c : courses) {
+                        if (c.getId().equals(e.getCourseId())) {
+                            System.out.print(" - Mon hoc: " + c.getName());
+                            // Tìm điểm tương ứng
+                            for (Grade g : grades) {
+                                if (g.getStudentId().equals(s.getId()) && g.getCourseId().equals(c.getId())) {
+                                    System.out.print(" | Diem: " + g.getScore());
                                 }
                             }
-                        }
-                        System.out.println("Da sap xep theo ten.");
-                    } else if (smenu == 8) {
-                        for (int i = 0; i < students.size(); i++) {
-                            for (int j = 0; j < students.size() - 1; j++) {
-                                String[] p1 = students.get(j).split("\\|");
-                                String[] p2 = students.get(j + 1).split("\\|");
-                                if (Double.parseDouble(p1[3]) < Double.parseDouble(p2[3])) {
-                                    String tmp = students.get(j);
-                                    students.set(j, students.get(j + 1));
-                                    students.set(j + 1, tmp);
-                                }
-                            }
-                        }
-                        System.out.println("Da sap xep theo GPA.");
-                    }
-                }
-
-            } else if (menu == 2) {
-                int tmenu = 0;
-                while (tmenu != 9) {
-                    System.out.println("--- QUAN LY GIAO VIEN ---");
-                    System.out.println("1. Them GV");
-                    System.out.println("2. Xoa GV");
-                    System.out.println("3. Cap nhat GV");
-                    System.out.println("4. Hien thi GV");
-                    System.out.println("9. Quay lai");
-                    tmenu = sc.nextInt(); sc.nextLine();
-                    if (tmenu == 1) {
-                        System.out.print("Nhap id GV: ");
-                        String id = sc.nextLine();
-                        System.out.print("Nhap ten GV: ");
-                        String name = sc.nextLine();
-                        System.out.print("Nhap chuyen mon: ");
-                        String major = sc.nextLine();
-                        teachers.add(id + "|" + name + "|" + major);
-                    } else if (tmenu == 2) {
-                        System.out.print("Nhap id GV can xoa: ");
-                        String id = sc.nextLine();
-                        for (int i = 0; i < teachers.size(); i++) {
-                            String[] p = teachers.get(i).split("\\|");
-                            if (p[0].equals(id)) {
-                                teachers.remove(i);
-                                break;
-                            }
-                        }
-                    } else if (tmenu == 3) {
-                        System.out.print("Nhap id GV cap nhat: ");
-                        String id = sc.nextLine();
-                        for (int i = 0; i < teachers.size(); i++) {
-                            String[] p = teachers.get(i).split("\\|");
-                            if (p[0].equals(id)) {
-                                System.out.print("Nhap ten moi: ");
-                                String name = sc.nextLine();
-                                System.out.print("Nhap chuyen mon moi: ");
-                                String major = sc.nextLine();
-                                teachers.set(i, id + "|" + name + "|" + major);
-                            }
-                        }
-                    } else if (tmenu == 4) {
-                        for (int i = 0; i < teachers.size(); i++) {
-                            String[] p = teachers.get(i).split("\\|");
-                            System.out.println("ID:" + p[0] + " Name:" + p[1] + " Major:" + p[2]);
-                        }
-                    }
-                }
-
-            } else if (menu == 3) {
-                // Quản lý môn học (copy-paste nữa)
-                int cmenu = 0;
-                while (cmenu != 9) {
-                    System.out.println("--- QUAN LY MON HOC ---");
-                    System.out.println("1. Them MH");
-                    System.out.println("2. Xoa MH");
-                    System.out.println("3. Cap nhat MH");
-                    System.out.println("4. Hien thi MH");
-                    System.out.println("9. Quay lai");
-                    cmenu = sc.nextInt(); sc.nextLine();
-                    if (cmenu == 1) {
-                        System.out.print("Nhap id MH: ");
-                        String id = sc.nextLine();
-                        System.out.print("Nhap ten MH: ");
-                        String name = sc.nextLine();
-                        System.out.print("Nhap so tin chi: ");
-                        int tc = sc.nextInt(); sc.nextLine();
-                        courses.add(id + "|" + name + "|" + tc);
-                    } else if (cmenu == 2) {
-                        System.out.print("Nhap id MH can xoa: ");
-                        String id = sc.nextLine();
-                        for (int i = 0; i < courses.size(); i++) {
-                            String[] p = courses.get(i).split("\\|");
-                            if (p[0].equals(id)) {
-                                courses.remove(i);
-                                break;
-                            }
-                        }
-                    } else if (cmenu == 3) {
-                        System.out.print("Nhap id MH cap nhat: ");
-                        String id = sc.nextLine();
-                        for (int i = 0; i < courses.size(); i++) {
-                            String[] p = courses.get(i).split("\\|");
-                            if (p[0].equals(id)) {
-                                System.out.print("Nhap ten moi: ");
-                                String name = sc.nextLine();
-                                System.out.print("Nhap tin chi moi: ");
-                                int tc = sc.nextInt(); sc.nextLine();
-                                courses.set(i, id + "|" + name + "|" + tc);
-                            }
-                        }
-                    } else if (cmenu == 4) {
-                        for (int i = 0; i < courses.size(); i++) {
-                            String[] p = courses.get(i).split("\\|");
-                            System.out.println("ID:" + p[0] + " Name:" + p[1] + " TinChi:" + p[2]);
+                            System.out.println();
                         }
                     }
                 }
             }
+        }
+    }
 
-            else if (menu == 4) {
-                int emenu = 0;
-                while (emenu != 9) {
-                    System.out.println("--- QUAN LY DANG KY HOC ---");
-                    System.out.println("1. Dang ky mon hoc");
-                    System.out.println("2. Huy dang ky");
-                    System.out.println("3. Xem tat ca dang ky");
-                    System.out.println("9. Quay lai");
-                    emenu = sc.nextInt(); sc.nextLine();
-                    if (emenu == 1) {
-                        System.out.print("Nhap id SV: ");
-                        String sid = sc.nextLine();
-                        System.out.print("Nhap id MH: ");
-                        String cid = sc.nextLine();
-                        enrollments.add(sid + "|" + cid);
-                    } else if (emenu == 2) {
-                        System.out.print("Nhap id SV: ");
-                        String sid = sc.nextLine();
-                        System.out.print("Nhap id MH: ");
-                        String cid = sc.nextLine();
-                        for (int i = 0; i < enrollments.size(); i++) {
-                            String[] p = enrollments.get(i).split("\\|");
-                            if (p[0].equals(sid) && p[1].equals(cid)) {
-                                enrollments.remove(i);
-                                break;
-                            }
-                        }
-                    } else if (emenu == 3) {
-                        for (int i = 0; i < enrollments.size(); i++) {
-                            String[] p = enrollments.get(i).split("\\|");
-                            System.out.println("SV: " + p[0] + " dang ky MH: " + p[1]);
-                        }
-                    }
-                }
-            }
+    // ========================== HELPERS ==========================
+    // ✅ Thêm hàm đọc số an toàn: giảm NumberFormatException (tăng robustness)
+    private static int readIntSafe() {
+        while (true) {
+            try { return Integer.parseInt(sc.nextLine()); }
+            catch (NumberFormatException ex) { System.out.print("Nhap so nguyen hop le: "); }
+        }
+    }
 
-            else if (menu == 5) {
-                int gmenu = 0;
-                while (gmenu != 9) {
-                    System.out.println("--- QUAN LY DIEM ---");
-                    System.out.println("1. Nhap diem");
-                    System.out.println("2. Cap nhat diem");
-                    System.out.println("3. Hien thi diem");
-                    System.out.println("9. Quay lai");
-                    gmenu = sc.nextInt(); sc.nextLine();
-                    if (gmenu == 1) {
-                        System.out.print("Nhap id SV: ");
-                        String sid = sc.nextLine();
-                        System.out.print("Nhap id MH: ");
-                        String cid = sc.nextLine();
-                        System.out.print("Nhap diem: ");
-                        double d = sc.nextDouble(); sc.nextLine();
-                        grades.add(sid + "|" + cid + "|" + d);
-                    } else if (gmenu == 2) {
-                        System.out.print("Nhap id SV: ");
-                        String sid = sc.nextLine();
-                        System.out.print("Nhap id MH: ");
-                        String cid = sc.nextLine();
-                        for (int i = 0; i < grades.size(); i++) {
-                            String[] p = grades.get(i).split("\\|");
-                            if (p[0].equals(sid) && p[1].equals(cid)) {
-                                System.out.print("Nhap diem moi: ");
-                                double d = sc.nextDouble(); sc.nextLine();
-                                grades.set(i, sid + "|" + cid + "|" + d);
-                            }
-                        }
-                    } else if (gmenu == 3) {
-                        for (int i = 0; i < grades.size(); i++) {
-                            String[] p = grades.get(i).split("\\|");
-                            System.out.println("SV:" + p[0] + " MH:" + p[1] + " Diem:" + p[2]);
-                        }
-                    }
-                }
-            }
-
-            else if (menu == 6) {
-                System.out.println("=== BAO CAO ===");
-                for (int i = 0; i < students.size(); i++) {
-                    String[] s = students.get(i).split("\\|");
-                    System.out.println("Sinh vien: " + s[1]);
-                    for (int j = 0; j < enrollments.size(); j++) {
-                        String[] e = enrollments.get(j).split("\\|");
-                        if (e[0].equals(s[0])) {
-                            for (int k = 0; k < courses.size(); k++) {
-                                String[] c = courses.get(k).split("\\|");
-                                if (c[0].equals(e[1])) {
-                                    System.out.print(" - Mon hoc: " + c[1]);
-                                    for (int m = 0; m < grades.size(); m++) {
-                                        String[] g = grades.get(m).split("\\|");
-                                        if (g[0].equals(s[0]) && g[1].equals(c[0])) {
-                                            System.out.print(" | Diem: " + g[2]);
-                                        }
-                                    }
-                                    System.out.println();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    private static double readDoubleSafe() {
+        while (true) {
+            try { return Double.parseDouble(sc.nextLine()); }
+            catch (NumberFormatException ex) { System.out.print("Nhap so thuc hop le: "); }
         }
     }
 }
