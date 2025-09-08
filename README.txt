@@ -2,7 +2,7 @@
 Đặng Lê Thanh Tú - CNTT K20 CLC
 Đằng Văn Huy - CNTT K20 CLC
 Dương Thành Đạt - CNTT K20 CLC
-
+Đặng Văn Phương - CNTT K20 CLC
 ___ CÁCH DEMO ________________________________________
 
 ----1. CẤU HÌNH GIT (chỉ làm 1 lần trên máy).
@@ -51,6 +51,7 @@ B4.
 CHẠY LỆNH 
 git checkout main
 git pull origin main
+
 
 
 
