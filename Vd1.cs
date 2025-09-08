@@ -4,6 +4,8 @@
 
 import java.util.*;
 
+// Sửa code lần 1: Tạo class Student, Teacher, Course, Enrollment, Grade 
+
 // ========================== ENTITIES ==========================
 
 // ❌ LỖI: Trước dùng ArrayList<String> lưu "id|name|age|gpa"
