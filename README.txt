@@ -32,6 +32,26 @@ B1: chạy lệnh để lấy code gốc:
 git clone https://github.com/dotatconglc/student-clean-code.git
 cd student-clean-code
 
+B2:
+ chạy lệnh:  
+git checkout -b feature-fix-vd1
+#tiến hành sửa code sửa code trong VS xong chạy lệnh sau.
+git add Vd1.cs
+git commit -m "Fix bug in Vd1 student update function"
+git push origin feature-fix-vd1
+====>   Lúc này GitHub sẽ có branch mới feature-fix-vd1.
+
+B3.
+Tạo Pull Request (PR)
+Vào GitHub → chọn branch feature-fix-vd1 → New Pull Request.
+Thảo luận trong PR → nhóm review code.
+Nếu OK → Merge vào main.
+
+B4.
+CHẠY LỆNH 
+git checkout main
+git pull origin main
+
 
 
 
