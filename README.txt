@@ -1,6 +1,7 @@
 ﻿Đỗ Tất Công - CNTT K20 CLC
 Đặng Lê Thanh Tú - CNTT K20 CLC
 Đằng Văn Huy - CNTT K20 CLC
+Dương Thành Đạt - CNTT K20 CLC
 
 ___ CÁCH DEMO ________________________________________
 
