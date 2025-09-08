@@ -1,7 +1,7 @@
 ﻿Đỗ Tất Công - CNTT K20 CLC
 Đặng Lê Thanh Tú - CNTT K20 CLC
 Đằng Văn Huy - CNTT K20 CLC
-
+Đặng Văn Phương - CNTT k20 CLC
 ___ CÁCH DEMO ________________________________________
 
 ----1. CẤU HÌNH GIT (chỉ làm 1 lần trên máy).
