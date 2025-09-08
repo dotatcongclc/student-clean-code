@@ -29,7 +29,7 @@ git commit -m "Refactor: clean code for Vd1.cs and Vd2.cs using OOP"
 
 ---- CẤC THANH VIEN TRONG NHÓM LAM----
 B1: chạy lệnh để lấy code gốc:
-git clone https://github.com/dotatconglc/student-clean-code.git
+git clone https://github.com/dotatcongclc/student-clean-code.git
 cd student-clean-code
 
 B2:
@@ -51,6 +51,7 @@ B4.
 CHẠY LỆNH 
 git checkout main
 git pull origin main
+
 
 
 
